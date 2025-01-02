@@ -1,0 +1,177 @@
+.parallax {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100vw;
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.overlay-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.overlay h1 {
+    font-size: 55px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    text-shadow: 1px 1px 1px #444;
+    line-height: 60px;
+    margin: 0 !important;
+    font-family: "Dela Gothic One";
+}
+
+.overlay h2 {
+    color: #e4e4e4;
+    text-align: center;
+    text-shadow: 1px 1px 1px #444;
+}
+
+.gif-supercars {
+    background-image: url("https://gifdb.com/images/high/lamborghini-sports-car-racing-ad-asl7f8xpji0lwz2b.gif");
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.card {
+    flex: 0 1 calc(50% - 20px); /* Initially 2 cards in a row, with spacing */
+    /* min-width: 360px; */
+    background-color: #f2f9ff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    line-height: 35px;
+    box-shadow: 0 1px 5px #333;
+    margin: 10px;
+    overflow: hidden;
+}
+  
+.card img, .modal img {
+    width: 100%;
+    height: auto;
+}
+
+.modal img {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card .content, .modal .content {
+    padding: 20px;
+    padding-top: 10px;
+}
+
+h2 {
+    font-size: 35px;
+    color: #eee;
+    margin: 0;
+}
+
+h3 {
+    font-size: 20px;
+    color: #ddd;
+    margin: 0;
+}
+
+h4 {
+    font-size: 20px;
+    margin: 0;
+}
+
+h5 {
+    font-size: 18px;
+    margin: 0;
+    color: #444;
+}
+
+.title, .sub-title {
+    padding-left: 20px;
+}
+
+.sub-title {
+    padding-bottom: 20px;
+}
+
+.card p {
+    text-align: justify;
+    margin: 0;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.card button, .modal button {
+    width: 130px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.info-btn {
+    background-color: #dfdfdf;
+}
+
+.info-btn:hover {
+    background-color: #c1c1c1;
+}
+
+.rent-btn {
+    background-color: #ffa600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card .rent-btn {
+    margin-left: 20px;
+}
+
+.rent-btn:hover {
+    background-color: #d98d00;
+}
+
+section {
+    padding: 50px;
+    background-color: #353535;
+}
+
+.margin-top-20 {
+    margin-top: 20px;
+}
+  
+/* Media query to adjust the number of cards in a row */
+@media screen and (max-width: 800px) {
+    .card {
+        flex: 0 1 calc(100% - 20px); /* 1 card in a row */
+    }
+}
+  

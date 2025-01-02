@@ -1,0 +1,49 @@
+form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea {
+    padding: 10px;
+    border: #888 solid 1px;
+    border-radius: 15px;
+    background-color: #f4f4f4;
+    margin-bottom: 10px;
+}
+
+textarea {
+    height: 100px;
+    resize: none;
+}
+
+input:hover, input:focus {
+    background-color: #eee;
+}
+
+h4 {
+    font-size: 25px;
+}
+
+h5 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    padding-bottom: 20px;
+}
+
+label {
+    padding-left: 5px;
+    padding-top: 5px;
+}
+
+.error-label {
+    color: rgb(195, 0, 0);
+    font-weight: 500;
+}
+
+.info {
+    font-size: 14px;
+    color: #444;
+    margin-left: 5px;
+}
