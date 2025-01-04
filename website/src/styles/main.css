@@ -41,6 +41,14 @@
     background-image: url("https://gifdb.com/images/high/lamborghini-sports-car-racing-ad-asl7f8xpji0lwz2b.gif");
 }
 
+.img-bg {
+    background-image: url("https://static.vecteezy.com/system/resources/previews/010/969/909/non_2x/light-green-background-bitcoin-crypto-currency-illustration-for-page-logo-card-banner-web-and-printing-free-vector.jpg");
+}
+
+.img-bg .overlay, .overlay-light {
+    background-color: rgba(0,0,0,0.3) !important;
+}
+
 .card-container {
     display: flex;
     flex-wrap: wrap;

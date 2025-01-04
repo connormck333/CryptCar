@@ -10,4 +10,9 @@ module.exports = async function (deployer) {
 
     // Deploy CryptCar contract and pass the address of CryptCarCoin contract as constructor parameter
     await deployer.deploy(CryptCar, cryptCarCoinInstance.address);
+
+    // Get the deployed CryptCar instance
+    const cryptCarInstance = await CryptCar.deployed();
+
+    await cryptCarCoinInstance.setCryptCarAddress(cryptCarInstance.address);
 };

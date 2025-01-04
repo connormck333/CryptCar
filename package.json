@@ -19,6 +19,6 @@
     "solidity-coverage": "^0.8.12"
   },
   "dependencies": {
-    "hardhat": "^2.22.6"
+    "hardhat": "^2.22.17"
   }
 }

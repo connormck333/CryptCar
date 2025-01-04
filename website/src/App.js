@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import 'font-awesome/css/font-awesome.min.css';
-import { ethers } from 'ethers';
-import { parseEther, formatEther } from '@ethersproject/units';
-import CryptCarCoin from './contracts/CryptCarCoin.json';
-import CryptCar from './contracts/CryptCar.json';
+import { useSelector, useDispatch } from "react-redux";
 import './App.css';
 import Header from './components/header';
 import InfoModal from './components/info_modal';
@@ -12,16 +9,16 @@ import Landing from './components/landing';
 import UploadRentalModal from './components/upload_rental_modal';
 import BuyCoinsModal from './components/buy_coins_modal';
 import RentCarModal from './components/rent_car_modal';
+import { loadAccountBalance } from './methods/coin';
 
 function App() {
 
-	const CryptCarCoinAddress = "0xfCAf95056Ec32289aD68cfc02a8C3C2cDc18f7e9";
-	const CryptCarAddress = "0x7efDb5E8e6a0028086C5e617fa9AC19853edB5Cf";
-
-	const [account, setAccount] = useState();
+	const globalData = useSelector(state => state.global.data);
+	const account = globalData.eth.account;
+	const coinContract = globalData.eth.token;
+	const carContract = globalData.eth.contract;
+	
 	const [balance, setBalance] = useState(0);
-	const [coinContract, setCoinContract] = useState(undefined);
-	const [carContract, setCarContract] = useState(undefined);
 	const [inventory, setInventory] = useState([]);
 	const [infoModalOpen, setInfoModalOpen] = useState(false);
 	const [uploadRentalModalOpen, setUploadRentalModalOpen] = useState(false);
@@ -31,38 +28,13 @@ function App() {
 
 	useEffect(() => {
 		(() => {
-			initializeEthereumContract();
+			loadRentalCars();
+			getBalance();
 		})();
 	}, []);
 
-	async function initializeEthereumContract() {
-		const _account = await requestAccount();
-		const { token, contract } = await initializeContracts();
-		loadRentalCars(contract);
-		loadAccountBalance(token, _account);
-	}
-
-	async function requestAccount() {
-		const account = await window.ethereum.request({ method: 'eth_requestAccounts' });
-		setAccount(account[0]);
-		return account[0];
-	}
-
-	async function initializeContracts() {
-		const provider = new ethers.BrowserProvider(window.ethereum);
-		const signer = await provider.getSigner();
-		const token = new ethers.Contract(CryptCarCoinAddress, CryptCarCoin.abi, signer);
-		const contract = new ethers.Contract(CryptCarAddress, CryptCar.abi, signer);
-		setCoinContract(token);
-		setCarContract(contract);
-		return {
-			token,
-			contract
-		}
-	}
-
-	async function loadRentalCars(contract) {
-		const response = await contract.getRentalCars();
+	async function loadRentalCars() {
+		const response = await carContract.getRentalCars();
 		const cars = [];
 		for (let car of response) {
 			cars.push({
@@ -82,22 +54,9 @@ function App() {
 		setInventory(cars);
 	}
 
-	async function loadAccountBalance(token, _account) {
-		try {
-			const bal = await token.getBalanceOfAddress(_account);
-			setBalance(parseInt(bal));
-		} catch (err) {
-			console.log(err)
-		}
-	}
-
-	async function updateAccountBalance() {
-		try {
-			const bal = await coinContract.getBalanceOfAddress(account);
-			setBalance(parseInt(bal));
-		} catch (err) {
-			console.log(err)
-		}
+	async function getBalance() {
+		const bal = await loadAccountBalance(coinContract, account);
+		setBalance(bal);
 	}
 
 	function _setSelectedCar(item) {
@@ -106,7 +65,6 @@ function App() {
 	}
 
 	function _setRentCarModalOpen(car) {
-		console.log(car)
 		setSelectedCar(car);
 		setRentCarModalOpen(true);
 	}
@@ -125,7 +83,7 @@ function App() {
 			<BuyCoinsModal
 				visible={[buyCoinsModalOpen, setBuyCoinsModalOpen]}
 				coinContract={coinContract}
-				updateAccountBalance={updateAccountBalance}
+				updateAccountBalance={getBalance}
 			/>
 			<RentCarModal
 				visible={[rentCarModalOpen, setRentCarModalOpen]}
@@ -136,6 +94,7 @@ function App() {
 				uploadRentalModal={[uploadRentalModalOpen, setUploadRentalModalOpen]}
 				buyCoinsModal={[buyCoinsModalOpen, setBuyCoinsModalOpen]}
 				balance={balance}
+				registered={globalData.eth.registered}
 			/>
 			<Landing />
 			<Inventory

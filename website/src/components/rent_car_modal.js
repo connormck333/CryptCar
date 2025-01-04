@@ -16,29 +16,36 @@ function RentCarModal(props) {
         setCost((parseInt(val) * car.pricePerDay).toString());
     }
 
-    async function submit() {
+    function submit() {
         
         if (loading) return;
 
         setLoading(true);
 
-        try {
-            const today = new Date(Date.now());
-            today.setHours(0);
-            today.setMinutes(0);
-            today.setSeconds(0);
-            today.setMilliseconds(0);
+        const today = new Date(Date.now());
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
 
-            const endDate = new Date(today.getTime());
-            endDate.setDate(endDate.getDate() + parseInt(days));
-            await carContract.rentCar(car.id, today.getTime() / 1000, endDate.getTime() / 1000);
+        const endDate = new Date(today.getTime());
+        endDate.setDate(endDate.getDate() + parseInt(days));
 
-            setVisible(false);
-        } catch (err) {
-            console.log(err)
-        }
+        console.log(Number(car.id), today.getTime() / 1000, endDate.getTime() / 1000);
+        // return;
 
-        setLoading(false)
+        carContract.rentCar(Number(car.id), Math.floor(today.getTime() / 1000), Math.floor(endDate.getTime() / 1000), {gasLimit: 3000000})
+            .then(() => {
+                alert("Car rental successful!");
+                setVisible(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                alert("Could not rent car. Please try again later.");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     return (

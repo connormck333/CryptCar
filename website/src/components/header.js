@@ -13,12 +13,17 @@ function Header(props) {
             </a>
             <nav>
                 <ul className="nav-links">
-                    <li><a href="#">Inventory</a></li>
+                    <li><a href="/">Inventory</a></li>
                     <li><a href="#">My Rentals</a></li>
+                    { !props.registered &&
+                        <li><a href="/register">Register</a></li>
+                    }
                     <li className="balance-container">
                         <button className="balance">CC${ props.balance }</button>
                     </li>
-                    <Dropdown {...props} />
+                    {props.dropdownDisabled != true &&
+                        <Dropdown {...props} />
+                    }
                 </ul>
                 <div className="menu-icon" onClick={() => {}}>
                     <div className="menu-line"></div>
