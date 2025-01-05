@@ -3,13 +3,14 @@ import 'font-awesome/css/font-awesome.min.css';
 import { useSelector, useDispatch } from "react-redux";
 import './App.css';
 import Header from './components/header';
-import InfoModal from './components/info_modal';
+import InfoModal from './components/modals/info_modal';
 import Inventory from './components/inventory';
 import Landing from './components/landing';
-import UploadRentalModal from './components/upload_rental_modal';
-import BuyCoinsModal from './components/buy_coins_modal';
-import RentCarModal from './components/rent_car_modal';
+import UploadRentalModal from './components/modals/upload_rental_modal';
+import BuyCoinsModal from './components/modals/buy_coins_modal';
+import RentCarModal from './components/modals/rent_car_modal';
 import { loadAccountBalance } from './methods/coin';
+import { getRentalCars } from './methods/cryptcar';
 
 function App() {
 
@@ -20,7 +21,6 @@ function App() {
 	
 	const [balance, setBalance] = useState(0);
 	const [inventory, setInventory] = useState([]);
-	const [infoModalOpen, setInfoModalOpen] = useState(false);
 	const [uploadRentalModalOpen, setUploadRentalModalOpen] = useState(false);
 	const [buyCoinsModalOpen, setBuyCoinsModalOpen] = useState(false);
 	const [rentCarModalOpen, setRentCarModalOpen] = useState(false);
@@ -34,34 +34,13 @@ function App() {
 	}, []);
 
 	async function loadRentalCars() {
-		const response = await carContract.getRentalCars();
-		const cars = [];
-		for (let car of response) {
-			cars.push({
-				brand: car[0],
-				model: car[1],
-				imageURL: car[2],
-				description: car[3],
-				pricePerDay: parseInt(car[4]),
-				depositAmount: parseInt(car[5]),
-				termsAndConditions: car[6],
-				location: car[7],
-				owner: car[8],
-				id: car[9]
-			});
-		}
-
+		const cars = await getRentalCars(carContract);
 		setInventory(cars);
 	}
 
 	async function getBalance() {
 		const bal = await loadAccountBalance(coinContract, account);
 		setBalance(bal);
-	}
-
-	function _setSelectedCar(item) {
-		setSelectedCar(item);
-		setInfoModalOpen(true);
 	}
 
 	function _setRentCarModalOpen(car) {
@@ -71,11 +50,6 @@ function App() {
 
 	return (
 		<div className="App">
-			<InfoModal
-				visible={[infoModalOpen, setInfoModalOpen]}
-				item={selectedCar}
-				openRentCarModal={_setRentCarModalOpen}
-			/>
 			<UploadRentalModal
 				visible={[uploadRentalModalOpen, setUploadRentalModalOpen]}
 				carContract={carContract}
@@ -99,8 +73,12 @@ function App() {
 			<Landing />
 			<Inventory
 				inventory={[inventory, setInventory]}
-				setSelectedCar={_setSelectedCar}
+				selectedCar={[selectedCar, setSelectedCar]}
 				openRentCarModal={_setRentCarModalOpen}
+				title="Our Inventory"
+				subtitle="Have a look at our amazing supercar collection. Rent your dream car now!"
+				button1Text="More info"
+				button2Text="Rent now"
 			/>
 		</div>
 	);

@@ -9,7 +9,7 @@ import '../App.css';
 import Header from '../components/header';
 import { loadAccountBalance } from '../methods/coin';
 import Loader from '../components/loader';
-import { setData } from '../components/global_state';
+import { setData } from '../methods/global_state';
 
 export default function Register(props) {
 

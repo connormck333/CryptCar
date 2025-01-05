@@ -14,7 +14,7 @@ function Header(props) {
             <nav>
                 <ul className="nav-links">
                     <li><a href="/">Inventory</a></li>
-                    <li><a href="#">My Rentals</a></li>
+                    <li><a href="/rentals">My Rentals</a></li>
                     { !props.registered &&
                         <li><a href="/register">Register</a></li>
                     }

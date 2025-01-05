@@ -175,6 +175,20 @@ section {
 .margin-top-20 {
     margin-top: 20px;
 }
+
+.margin-left-20 {
+    margin-left: 20px !important;
+}
+
+.dark-bg {
+    background-color: #353535;
+    width: 100vw;
+    height: 100vh;
+}
+
+.bold {
+    font-weight: 600 !important;
+}
   
 /* Media query to adjust the number of cards in a row */
 @media screen and (max-width: 800px) {

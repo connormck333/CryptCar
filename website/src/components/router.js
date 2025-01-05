@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import App from '../App';
 import Register from '../screens/register';
 import EthInitializer from "../methods/eth_initializer";
+import Rentals from "../screens/rentals";
 
 export default function Router(props) {
 
@@ -16,6 +17,7 @@ export default function Router(props) {
                     <Routes>
                         <Route path="/" element={<App />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="rentals" element={<Rentals />} />
                     </Routes>
                 ) : (
                     <EthInitializer setEthLoaded={setEthLoaded} />
