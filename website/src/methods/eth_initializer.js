@@ -5,7 +5,7 @@ import CryptCarCoin from '../contracts/CryptCarCoin.json';
 import CryptCar from '../contracts/CryptCar.json';
 import Loader from '../components/loader';
 import { useEffect } from 'react';
-import { setData } from '../components/global_state';
+import { setData } from './global_state';
 
 export default function EthInitializer(props) {
 
@@ -57,7 +57,6 @@ export default function EthInitializer(props) {
     async function isUserRegistered(contract, account) {
         try {
             const user = await contract.getRenter(account);
-            console.log(user);
             return user[2].toLowerCase() == account.toLowerCase();
         } catch (e) {
             return false;
