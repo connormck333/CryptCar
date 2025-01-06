@@ -31,6 +31,7 @@ contract CryptCar {
         uint256 startDate;
         uint256 endDate;
         uint256 timestamp;
+        bool isActive;
     }
 
     event DepositReturned(
@@ -136,7 +137,7 @@ contract CryptCar {
         require(renterBalance >= cost + car.depositAmount, "Insufficient CryptCarCoin Balance");
         
         rentalCounter++;
-        CarRented memory rental = CarRented(renter, car, rentalCounter, startDate, endDate, block.timestamp);
+        CarRented memory rental = CarRented(renter, car, rentalCounter, startDate, endDate, block.timestamp, true);
         currentlyRentedCars[car.id] = rental;
 
         token.transferTokensForRental(msg.sender, car.owner, cost, car.depositAmount);
@@ -145,14 +146,14 @@ contract CryptCar {
     function returnDeposit(uint256 carID) public {
         RentalCar memory car = getRentalCar(carID);
         require(msg.sender == car.owner, "You are not the owner of this vehicle");
-        
-        CarRented memory rental = currentlyRentedCars[car.id];
-        require(rental.rentalID != 0, "Car is not currently being rented");
-        require(block.timestamp >= rental.endDate, "Cannot return deposit until end of rental");
-        
-        Renter memory renter = getRenter(rental.renter.user);
-        require(renter.id != 0, "Renter does not exist.");
 
+        CarRented storage rental = currentlyRentedCars[carID];
+        require(rental.isActive, "Car is not currently being rented");
+        require(block.timestamp >= rental.endDate, "Cannot return deposit until end of rental");
+
+        Renter memory renter = getRenter(rental.renter.user);
+
+        rental.isActive = false; // Correctly update storage
         token.returnRenterDeposit(renter.user, car.depositAmount);
 
         emit DepositReturned(car.depositAmount, car.id, car.owner, renter.user);
@@ -162,15 +163,19 @@ contract CryptCar {
         RentalCar memory car = getRentalCar(carID);
         require(msg.sender == car.owner, "You are not the owner of this vehicle");
         
-        CarRented memory rental = currentlyRentedCars[car.id];
-        require(rental.rentalID != 0, "Car is not currently being rented");
+        CarRented memory rental = currentlyRentedCars[carID];
+        require(rental.isActive == true, "Car is not currently being rented");
         require(block.timestamp >= rental.endDate, "Cannot keep deposit until end of rental");
-        
-        Renter memory renter = getRenter(rental.renter.user);
-        require(renter.id != 0, "Renter does not exist.");
 
+        Renter memory renter = getRenter(rental.renter.user);
+
+        completeRental(car.id);
         token.keepRenterDeposit(car.owner, car.depositAmount);
         
         emit DepositKept(car.depositAmount, car.id, car.owner, renter.user, reason);
+    }
+
+    function completeRental(uint256 carId) private {
+        currentlyRentedCars[carId].isActive = false;
     }
 }

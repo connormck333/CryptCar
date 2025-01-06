@@ -1,5 +1,10 @@
-const { expect } = require("chai");
+const chai = require("chai");
 const { ethers } = require("hardhat");
+const eventemitter2 = require('chai-eventemitter2');
+const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
+
+const { expect } = chai;
+chai.use(eventemitter2());
 
 describe("CryptCar", function () {
 
@@ -13,22 +18,22 @@ describe("CryptCar", function () {
         carOwner = wallets[2];
         const CryptCarCoin = await ethers.getContractFactory("CryptCarCoin");
         token = await CryptCarCoin.deploy(1000);
-        await token.deployed();
+        await token.waitForDeployment();
 
         const CryptCar = await ethers.getContractFactory("CryptCar");
-        contract = await CryptCar.deploy(token.address);
-        await contract.deployed();
+        contract = await CryptCar.deploy(token.target);
+        await contract.waitForDeployment();
     });
 
     it("Setting CryptCar contract as CryptCarAddress in CryptCarCoin should pass as owner", async () => {
-        const tx = await token.setCryptCarAddress(contract.address);
+        const tx = await token.setCryptCarAddress(contract.target);
 
         expect(tx).to.be.ok;
     });
 
     it("Setting CryptCar contract as CryptCarAddress in CryptCarCoin should not pass as not the owner", async () => {
         try {
-            await token.connect(wallets[1]).setCryptCarAddress(contract.address);
+            await token.connect(wallets[1]).setCryptCarAddress(contract.target);
             expect.fail();
         } catch (err) {
             expect(err.message).to.contain("revert");
@@ -61,11 +66,11 @@ describe("CryptCar", function () {
 
     it("Buying tokens should be accepted", async () => {
         await token.connect(renter).buy({
-            value: ethers.utils.parseUnits("10", "wei")
+            value: ethers.parseUnits("10", "wei")
         });
         const balance = await token.getBalanceOfAddress(renter.address);
 
-        expect(balance.toNumber()).to.be.equal(2);
+        expect(Number(balance)).to.be.equal(2);
     });
 
     it("Selling tokens should be accepted", async () => {
@@ -77,7 +82,7 @@ describe("CryptCar", function () {
         await token.connect(renter).transfer(1, carOwner.address);
         const balance = await token.getBalanceOfAddress(carOwner.address);
 
-        expect(balance.toNumber()).to.be.equal(1);
+        expect(Number(balance)).to.be.equal(1);
     });
 
     it("Calling function with 'onlyCryptCar' modifier should not be accepted from wallet", async () => {
@@ -105,11 +110,11 @@ describe("CryptCar", function () {
         }
     });
 
-    it("Renting a car after registering should be accepted", async () => {
+    it("Renting a car without insufficient tokens should not be accepted", async () => {
         await contract.connect(renter).registerForRenting("Test", "Renter");
 
         try {
-            await contract.connect(renter).rentCar(1, 1716212159, 1716381343);
+            await contract.connect(renter).rentCar(1, Math.floor(Date.now() / 1000), Math.floor((Date.now() / 1000) + 86400));
             expect.fail();
         } catch (err) {
             expect(err.message).to.contain("Insufficient CryptCarCoin Balance");
@@ -118,12 +123,12 @@ describe("CryptCar", function () {
 
     it("Renting a car after registering and with sufficient tokens should be accepted", async () => {
         await token.connect(renter).buy({
-            value: ethers.utils.parseUnits("500", "wei")
+            value: ethers.parseUnits("500", "wei")
         });
 
         const balance = await token.getBalanceOfAddress(renter.address);
 
-        const tx = await contract.connect(renter).rentCar(1, 1716212159, 1716381343);
+        const tx = await contract.connect(renter).rentCar(1, Math.floor(Date.now() / 1000), Math.floor((Date.now() / 1000) + 86400));
         expect(tx).to.be.ok;
 
         const newBalance = await token.getBalanceOfAddress(renter.address);
@@ -139,21 +144,43 @@ describe("CryptCar", function () {
         }
     });
 
-    it("Attempting to manage deposit before end of rental should not pass", async () => {
-        try {
-            await contract.connect(carOwner).returnDeposit(1);
-            // expect.fail();
-        } catch (err) {
-            console.log(err.message);
-            expect(err.message).to.contain(err.message);
-        }
+    describe("Deposit management", () => {
 
-        // try {
-        //     await contract.connect(carOwner).keepDeposit(1, "Scratches on the wheel");
-        //     expect.fail();
-        // } catch (err) {
-        //     expect(err.message).to.contain("Car is currently rented");
-        // }
+        before(async () => {
+            let tx = await contract.connect(carOwner).registerCarForRental("Lamborghini", "Centenario", "", "2021 Lamborghini, 1000BHP, Hybrid", 10, 3, "Any damage at all and the deposit will be kept.", "Antrim");
+            await tx.wait();
+            tx = await contract.connect(renter).rentCar(2, 10000, 100000);
+            await tx.wait();
+        });
+
+        it("Attempting to manage deposit before end of rental should not pass", async () => {
+            try {
+                await contract.connect(carOwner).returnDeposit(1);
+                expect.fail();
+            } catch (err) {
+                expect(err.message).to.contain("Cannot return deposit until end of rental");
+            }
+    
+            try {
+                await contract.connect(carOwner).keepDeposit(1, "Scratches on the wheel");
+                expect.fail();
+            } catch (err) {
+                expect(err.message).to.contain("Cannot keep deposit until end of rental");
+            }
+        });
+    
+        it("Attempting to return deposit twice should not pass", async () => {
+            try {
+                let tx = await contract.connect(carOwner).returnDeposit(2);
+                await tx.wait();
+                tx = await contract.connect(carOwner).returnDeposit(2);
+                await tx.wait();
+                expect.fail()
+            } catch (err) {
+                expect(err.message).to.contain("Car is not currently being rented");
+            }
+        })
+
     });
 
     it("Renting same car twice at same time should not pass", async () => {
