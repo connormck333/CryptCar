@@ -26,7 +26,14 @@ async function getRentalCarsByOwnerId(carContract, ownerId) {
     return ownerCars;
 }
 
+function returnDeposit(carContract, carId, callbackOnSuccess) {
+    carContract.returnDeposit(carId)
+        .then(callbackOnSuccess)
+        .catch(() => alert("Error, could not return deposit."));
+}
+
 export {
     getRentalCars,
-    getRentalCarsByOwnerId
+    getRentalCarsByOwnerId,
+    returnDeposit
 }

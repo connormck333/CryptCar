@@ -1,10 +1,20 @@
+import { returnDeposit } from "../../methods/cryptcar";
 import "../../styles/main.css";
 import Modal from './modal';
 
 export default function DepositModal(props) {
 
     const [visible, setVisible] = props.visible;
-    const { item } = props;
+    const { item, carContract } = props;
+
+    function returnCarDeposit() {
+        returnDeposit(carContract, Number(item.id), () => returnDepositCallback());
+    }
+
+    function returnDepositCallback() {
+        alert("Deposit has been returned to renter.");
+        setVisible(false);
+    }
  
     return (
         <Modal
@@ -17,8 +27,8 @@ export default function DepositModal(props) {
                 <h4 className="margin-top-20">Manage deposit</h4>
                 <h5>Select to return or keep deposit.</h5>
                 <div className="row align-center">
-                    <button onClick={() => {}} className="info-btn">Keep</button>
-                    <button onClick={() => {}} className="rent-btn margin-left-20 bold">Return</button>
+                    <button type="button" onClick={() => {}} className="info-btn">Keep</button>
+                    <button type="button" onClick={() => returnCarDeposit()} className="rent-btn margin-left-20 bold">Return</button>
                 </div>
             </form>
         </Modal>

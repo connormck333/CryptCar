@@ -47,6 +47,8 @@ export default function Rentals(props) {
         <div className="dark-bg">
             <DepositModal
                 visible={[depositModalOpen, setDepositModalOpen]}
+                item={selectedCar}
+                carContract={carContract}
             />
             <Header
                 balance={balance}
