@@ -147,13 +147,13 @@ contract CryptCar {
         RentalCar memory car = getRentalCar(carID);
         require(msg.sender == car.owner, "You are not the owner of this vehicle");
 
-        CarRented storage rental = currentlyRentedCars[carID];
+        CarRented memory rental = currentlyRentedCars[carID];
         require(rental.isActive, "Car is not currently being rented");
         require(block.timestamp >= rental.endDate, "Cannot return deposit until end of rental");
 
         Renter memory renter = getRenter(rental.renter.user);
 
-        rental.isActive = false; // Correctly update storage
+        completeRental(carID);
         token.returnRenterDeposit(renter.user, car.depositAmount);
 
         emit DepositReturned(car.depositAmount, car.id, car.owner, renter.user);
@@ -164,7 +164,7 @@ contract CryptCar {
         require(msg.sender == car.owner, "You are not the owner of this vehicle");
         
         CarRented memory rental = currentlyRentedCars[carID];
-        require(rental.isActive == true, "Car is not currently being rented");
+        require(rental.isActive, "Car is not currently being rented");
         require(block.timestamp >= rental.endDate, "Cannot keep deposit until end of rental");
 
         Renter memory renter = getRenter(rental.renter.user);
@@ -175,7 +175,7 @@ contract CryptCar {
         emit DepositKept(car.depositAmount, car.id, car.owner, renter.user, reason);
     }
 
-    function completeRental(uint256 carId) private {
-        currentlyRentedCars[carId].isActive = false;
+    function completeRental(uint256 carID) private {
+        currentlyRentedCars[carID].isActive = false;
     }
 }
