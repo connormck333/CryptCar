@@ -9,8 +9,8 @@ import { setData } from './global_state';
 
 export default function EthInitializer(props) {
 
-    const CryptCarCoinAddress = "0x841E934E260DF306aA047B8b7644141E630aCbbd";
-    const CryptCarAddress = "0xCB6d6eC492AD54949Db83f36c3e9F7F517F7016a";
+    const CryptCarCoinAddress = "0x5fbdb2315678afecb367f032d93f642f64180aa3";
+    const CryptCarAddress = "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512";
 
     const globalData = useSelector(state => state.global.data);
     const dispatch = useDispatch();

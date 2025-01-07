@@ -1,4 +1,5 @@
 async function getRentalCars(carContract) {
+    console.log(carContract);
     const response = await carContract.getRentalCars();
     const cars = [];
     for (let car of response) {
