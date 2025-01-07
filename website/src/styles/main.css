@@ -172,6 +172,10 @@ section {
     background-color: #353535;
 }
 
+.padding-0 {
+    padding: 0 !important;
+}
+
 .margin-top-20 {
     margin-top: 20px;
 }

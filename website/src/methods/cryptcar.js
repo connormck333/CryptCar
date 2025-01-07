@@ -32,8 +32,15 @@ function returnDeposit(carContract, carId, callbackOnSuccess) {
         .catch(() => alert("Error, could not return deposit."));
 }
 
+function keepDeposit(carContract, carId, reason, callbackOnSuccess) {
+    carContract.keepDeposit(carId, reason)
+        .then(callbackOnSuccess)
+        .catch(() => alert("Error, could not return deposit."));
+}
+
 export {
     getRentalCars,
     getRentalCarsByOwnerId,
-    returnDeposit
+    returnDeposit,
+    keepDeposit
 }
