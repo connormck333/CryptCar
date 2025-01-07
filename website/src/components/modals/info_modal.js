@@ -20,7 +20,7 @@ function InfoModal(props) {
                         </div>
                         <p>{ item.description }</p>
                         <ul>
-                            <li>Deposit: { item.depositAmount }</li>
+                            <li>Deposit: CC${ item.depositAmount }</li>
                             <li>Location: { item.location }</li>
                         </ul>
                         <h5 style={{paddingBottom: 5, paddingTop: 5}}>Terms & Conditions</h5>

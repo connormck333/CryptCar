@@ -29,13 +29,13 @@ async function getRentalCarsByOwnerId(carContract, ownerId) {
 function returnDeposit(carContract, carId, callbackOnSuccess) {
     carContract.returnDeposit(carId)
         .then(callbackOnSuccess)
-        .catch(() => alert("Error, could not return deposit."));
+        .catch(() => alert("Error, could not manage deposit."));
 }
 
 function keepDeposit(carContract, carId, reason, callbackOnSuccess) {
     carContract.keepDeposit(carId, reason)
         .then(callbackOnSuccess)
-        .catch(() => alert("Error, could not return deposit."));
+        .catch(() => alert("Error, could not manage deposit."));
 }
 
 export {

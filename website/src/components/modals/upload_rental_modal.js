@@ -5,7 +5,7 @@ import Loader from "../loader";
 
 function UploadRentalModal(props) {
 
-    const { carContract } = props;
+    const { carContract, reloadInventory } = props;
     const [visible, setVisible] = props.visible;
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
@@ -19,64 +19,41 @@ function UploadRentalModal(props) {
     const [loading, setLoading] = useState(false);
 
     function lengthCheck(string) {
-        if (string.length < 3) {
-            console.log(string);
-            return false;
-        } else if (string.length > 40) {
-            console.log(string);
-            return false;
-        }
-
-        return true;
+        return string.length >= 3 && string.length <= 40;
     }
 
     function longLengthCheck(string) {
-        if (string.length < 3) {
-            console.log(string);
-            console.log(string.length)
-            return false;
-        } else if (string.length > 1000) {
-            console.log(string)
-            console.log(string.length)
-            return false;
-        }
-
-        return true;
+        return string.length >= 3 && string.length <= 1000;
     }
 
     function numCheck(num) {
-        if (typeof num !== "number") {
-            console.log(typeof num);
-            return false;
-        }
-
-        return true;
+        return typeof num === "number";
     }
 
     function validateInputs() {
         let invalid = false;
         if (!lengthCheck(brand)) {
-            invalid = true;
+            invalid = "brand";
         } else if (!lengthCheck(model)) {
-            invalid = true;
+            invalid = "model";
         } else if (!longLengthCheck(imageURL)) {
-            invalid = true;
+            invalid = "image";
         } else if (!numCheck(parseFloat(price))) {
-            invalid = true;
+            invalid = "price";
         } else if (!numCheck(parseFloat(deposit))) {
-            invalid = true;
+            invalid = "deposit";
         } else if (!lengthCheck(city)) {
-            invalid = true;
+            invalid = "city";
         }
 
         if (!longLengthCheck(description)) {
-            invalid = true;
+            invalid = "description";
         } else if (!longLengthCheck(terms)) {
-            invalid = true;
+            invalid = "terms";
         }
 
-        if (invalid) {
-            setFormInvalid(true);
+        if (invalid !== false) {
+            setFormInvalid(invalid);
             return false;
         }
 
@@ -102,7 +79,8 @@ function UploadRentalModal(props) {
             _deposit,
             terms,
             city
-        ).then(() => {
+        ).then(async () => {
+            await reloadInventory();
             alert("Your car is now available for rental!");
         }).catch(() => {
             alert("There was an error. Please try again later.");
@@ -179,8 +157,8 @@ function UploadRentalModal(props) {
                     onChange={({target}) => setTerms(target.value)}
                 ></textarea>
                 {
-                    formInvalid &&
-                    <label className="error-label">Invalid form</label>
+                    formInvalid !== false &&
+                    <label className="error-label">Invalid form: { formInvalid }</label>
                 }
                 <button type="button" onClick={() => submit()} className="rent-btn margin-top-20">
                     { loading ? <Loader /> : "Submit" }

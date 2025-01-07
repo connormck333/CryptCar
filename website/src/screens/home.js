@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
 import 'font-awesome/css/font-awesome.min.css';
-import { useSelector, useDispatch } from "react-redux";
-import './App.css';
-import Header from './components/header';
-import InfoModal from './components/modals/info_modal';
-import Inventory from './components/inventory';
-import Landing from './components/landing';
-import UploadRentalModal from './components/modals/upload_rental_modal';
-import BuyCoinsModal from './components/modals/buy_coins_modal';
-import RentCarModal from './components/modals/rent_car_modal';
-import { loadAccountBalance } from './methods/coin';
-import { getRentalCars } from './methods/cryptcar';
+import { useSelector } from "react-redux";
+import '../App.css';
+import Header from '../components/header';
+import Inventory from '../components/inventory';
+import Landing from '../components/landing';
+import UploadRentalModal from '../components/modals/upload_rental_modal';
+import BuyCoinsModal from '../components/modals/buy_coins_modal';
+import RentCarModal from '../components/modals/rent_car_modal';
+import { loadAccountBalance } from '../methods/coin';
+import { getRentalCars } from '../methods/cryptcar';
 
-function App() {
+function Home() {
 
 	const globalData = useSelector(state => state.global.data);
 	const account = globalData.eth.account;
@@ -49,10 +48,11 @@ function App() {
 	}
 
 	return (
-		<div className="App">
+		<div className="home">
 			<UploadRentalModal
 				visible={[uploadRentalModalOpen, setUploadRentalModalOpen]}
 				carContract={carContract}
+				reloadInventory={loadRentalCars}
 			/>
 			<BuyCoinsModal
 				visible={[buyCoinsModalOpen, setBuyCoinsModalOpen]}
@@ -74,14 +74,13 @@ function App() {
 			<Inventory
 				inventory={[inventory, setInventory]}
 				selectedCar={[selectedCar, setSelectedCar]}
-				openRentCarModal={_setRentCarModalOpen}
 				title="Our Inventory"
 				subtitle="Have a look at our amazing supercar collection. Rent your dream car now!"
-				button1Text="More info"
 				button2Text="Rent now"
+				button2OnClick={_setRentCarModalOpen}
 			/>
 		</div>
 	);
 }
 
-export default App;
+export default Home;

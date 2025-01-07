@@ -179,11 +179,11 @@
 
 .balance:hover + .dropdown,
 .dropdown:hover {
-  display: block;
+  display: block !important;
 }
 
 .balance-container:hover + .dropdown {
-  display: block;
+  display: block !important;
 }
 
 .dropdown button {
@@ -214,5 +214,6 @@
   
   .menu-icon {
     display: flex;
+    padding-right: 40px;
   }
 }

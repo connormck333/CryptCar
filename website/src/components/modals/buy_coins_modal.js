@@ -28,7 +28,7 @@ function BuyCoinsModal(props) {
 
             setVisible(false);
         } catch (err) {
-            console.log(err)
+            alert("There was an error. Please try again later.");
         }
 
         setLoading(false);
