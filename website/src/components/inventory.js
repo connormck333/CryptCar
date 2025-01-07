@@ -34,7 +34,7 @@ function Inventory(props) {
 
 function Card(props) {
     
-    const { item, openRentCarModal, setModalOpen } = props;
+    const { item, setModalOpen } = props;
     const [selectedCar, setSelectedCar] = props.selectedCar;
 
     function openInfoModal() {
@@ -52,7 +52,7 @@ function Card(props) {
                 </div>
                 <p>{ item.description }</p>
                 <div className="row align-center margin-top-20">
-                    <button onClick={() => openInfoModal()} className="info-btn">{ props.button1Text }</button>
+                    <button onClick={() => openInfoModal()} className="info-btn">More Info</button>
                     <button onClick={() => props.button2OnClick(item)} className="rent-btn">{ props.button2Text }</button>
                 </div>
             </div>

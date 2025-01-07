@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../../styles/rental_upload.css";
 import Modal from "./modal";
+import Loader from "../loader";
 
 function UploadRentalModal(props) {
 
@@ -15,6 +16,7 @@ function UploadRentalModal(props) {
     const [city, setCity] = useState("");
     const [terms, setTerms] = useState("");
     const [formInvalid, setFormInvalid] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function lengthCheck(string) {
         if (string.length < 3) {
@@ -51,10 +53,7 @@ function UploadRentalModal(props) {
         return true;
     }
 
-    async function submit() {
-        setFormInvalid(false);
-
-        // Validation
+    function validateInputs() {
         let invalid = false;
         if (!lengthCheck(brand)) {
             invalid = true;
@@ -77,27 +76,52 @@ function UploadRentalModal(props) {
         }
 
         if (invalid) {
-            console.log("invalid")
             setFormInvalid(true);
+            return false;
+        }
+
+        return true;
+    }
+
+    function submit() {
+        setFormInvalid(false);
+        const valid = validateInputs();
+        if (!valid) {
             return;
         }
 
-        try {
-            const _price = parseInt(price);
-            const _deposit = parseInt(deposit);
-            const response = await carContract.registerCarForRental(
-                brand,
-                model,
-                imageURL,
-                description,
-                _price,
-                _deposit,
-                terms,
-                city
-            );
-        } catch (err) {
-            console.log(err);
-        }
+        setLoading(true);
+        const _price = parseInt(price);
+        const _deposit = parseInt(deposit);
+        carContract.registerCarForRental(
+            brand,
+            model,
+            imageURL,
+            description,
+            _price,
+            _deposit,
+            terms,
+            city
+        ).then(() => {
+            alert("Your car is now available for rental!");
+        }).catch(() => {
+            alert("There was an error. Please try again later.");
+        }).finally(() => {
+            setVisible(false);
+            setLoading(false);
+            resetForm();
+        });
+    }
+
+    function resetForm() {
+        setBrand("");
+        setModel("");
+        setImageURL("");
+        setDescription("");
+        setPrice("");
+        setDeposit("");
+        setCity("");
+        setTerms("");
     }
 
     return (
@@ -158,7 +182,9 @@ function UploadRentalModal(props) {
                     formInvalid &&
                     <label className="error-label">Invalid form</label>
                 }
-                <button type="button" onClick={() => submit()} className="rent-btn margin-top-20">Submit</button>
+                <button type="button" onClick={() => submit()} className="rent-btn margin-top-20">
+                    { loading ? <Loader /> : "Submit" }
+                </button>
             </form>
         </Modal>
     );

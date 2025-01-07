@@ -57,7 +57,7 @@ export default function EthInitializer(props) {
     async function isUserRegistered(contract, account) {
         try {
             const user = await contract.getRenter(account);
-            return user[2].toLowerCase() == account.toLowerCase();
+            return user[2].toLowerCase() === account.toLowerCase();
         } catch (e) {
             return false;
         }
